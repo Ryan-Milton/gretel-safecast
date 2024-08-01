@@ -7,8 +7,8 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "../ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
+import { Skeleton } from "../ui/skeleton";
+import useDetailedData from "@/lib/data";
 
 export type MeasurementData = {
   id: number;
@@ -50,37 +50,15 @@ export const columns: ColumnDef<MeasurementData>[] = [
       </div>
     ),
     cell: ({ row }) => {
-      const [isExpanded, setIsExpanded] = useState(false);
-
-      // fetch measurement details and user details
-      const { isPending, isError, data, error } = useQuery({
-        queryKey: ["measurement_details"],
-        queryFn: async () => {
-          const measurement_data = await fetch(
-            `${import.meta.env.VITE_MEASUREMENT_BASE_URL}/${
-              row.original.id
-            }?api_key=${import.meta.env.VITE_SAFECAST_API_KEY}&format=json&id=${
-              row.original.id
-            }`
-          ).then((res) => res.json());
-          const user_data = await fetch(
-            `${import.meta.env.VITE_USER_BASE_URL}/${
-              row.original.user_id
-            }?api_key=${import.meta.env.VITE_SAFECAST_API_KEY}&format=json&id=${
-              row.original.user_id
-            }`
-          ).then((res) => res.json());
-          return { measurement_data, user_data };
-        },
-        enabled: isExpanded,
+      const { isPending, isError, data, error } = useDetailedData({
+        expanded: row.getIsExpanded(),
+        measurement_id: row.original.id,
+        user_id: row.original.user_id,
+        device_id: row.original.device_id,
+        measurement_import_id: row.original.measurement_import_id,
       });
 
-      const handleToggleExpanded = () => {
-        setIsExpanded(!isExpanded);
-        row.toggleExpanded();
-      };
-
-      console.log("isExpanded", isExpanded);
+      console.log(row.original);
       console.log({ isPending, isError, data, error });
 
       return (
@@ -92,7 +70,7 @@ export const columns: ColumnDef<MeasurementData>[] = [
         >
           <AccordionItem value={row.getIsExpanded()} className="border-b-0">
             <AccordionTrigger
-              onClick={() => handleToggleExpanded()}
+              onClick={() => row.toggleExpanded()}
               className="hover:no-underline"
             >
               <div className="flex w-full flex-row items-center justify-between">
@@ -108,7 +86,39 @@ export const columns: ColumnDef<MeasurementData>[] = [
               </div>
             </AccordionTrigger>
             <AccordionContent>
-              <div>Sub Content</div>
+              {isPending ? (
+                <div className="flex flex-row gap-4 w-full">
+                  <div className="flex flex-col w-1/3 h-40 gap-4">
+                    <Skeleton className="w-1/2 h-4" />
+                    <Skeleton className="w-2/3 h-4" />
+                    <Skeleton className="w-1/4 h-4" />
+                    <Skeleton className="w-1/4 h-4" />
+                  </div>
+                  <div className="flex flex-col w-1/3 h-40 gap-4">
+                    <Skeleton className="w-1/4 h-4" />
+                    <Skeleton className="w-1/2 h-4" />
+                    <Skeleton className="w-1/4 h-4" />
+                    <Skeleton className="w-2/3 h-4" />
+                  </div>
+                  <Skeleton className="w-1/3 h-40" />
+                </div>
+              ) : isError ? (
+                <span>Error: {error.message}</span>
+              ) : (
+                <div className="flex flex-row gap-4 w-full">
+                  {/* this contasins user data, device data, and bgeigie import data */}
+                  <div className="w-2/3 flex flex-row gap-4">
+                    <div className="w-1/2">
+                      <p></p>
+                    </div>
+                    <div className="w-1/2"></div>
+                  </div>
+                  {/* This is where the Map will go */}
+                  <div className="w-1/3 flex flex-col">
+                    <p>Location Name</p>
+                  </div>
+                </div>
+              )}
             </AccordionContent>
           </AccordionItem>
         </Accordion>

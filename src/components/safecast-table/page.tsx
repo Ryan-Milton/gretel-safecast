@@ -7,7 +7,7 @@ export default function DemoPage() {
     queryKey: ["measurements"],
     queryFn: () =>
       fetch(
-        `${import.meta.env.VITE_MEASUREMENT_BASE_URL}?api_key=${
+        `api/measurements?api_key=${
           import.meta.env.VITE_SAFECAST_API_KEY
         }&format=json`
       ).then((res) => res.json()),

@@ -33,8 +33,6 @@ export function DataTable({ columns, data }: DataTableProps) {
     getExpandedRowModel: getExpandedRowModel(),
   });
 
-  console.log(data);
-
   return (
     <div className="rounded-md border">
       <Table>
