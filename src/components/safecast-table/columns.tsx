@@ -44,8 +44,13 @@ export const columns: ColumnDef<MeasurementData>[] = [
       </Button>
     ),
     cell: ({ row }) => (
-      <Accordion key={row.id} type="single" collapsible>
-        <AccordionItem value={row.id.toString()}>
+      <Accordion
+        key={row.id}
+        type="single"
+        collapsible
+        value={row.getIsExpanded()}
+      >
+        <AccordionItem value={row.getIsExpanded()}>
           <AccordionTrigger
             onClick={() => row.toggleExpanded()}
           ></AccordionTrigger>
