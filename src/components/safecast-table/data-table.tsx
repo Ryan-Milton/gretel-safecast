@@ -19,6 +19,9 @@ import { MeasurementData } from "./columns";
 interface DataTableProps {
   columns: ColumnDef<MeasurementData>[];
   data: MeasurementData[];
+  isPending: boolean;
+  isError: boolean;
+  error: any;
 }
 
 export function DataTable({ columns, data }: DataTableProps) {
@@ -29,6 +32,8 @@ export function DataTable({ columns, data }: DataTableProps) {
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
   });
+
+  console.log(data);
 
   return (
     <div className="rounded-md border">
@@ -59,7 +64,7 @@ export function DataTable({ columns, data }: DataTableProps) {
                 data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <TableCell className="py-0" key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
