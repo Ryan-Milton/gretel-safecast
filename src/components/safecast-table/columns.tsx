@@ -50,32 +50,28 @@ export const columns: ColumnDef<MeasurementData>[] = [
         collapsible
         value={row.getIsExpanded()}
       >
-        <AccordionItem value={row.getIsExpanded()}>
+        <AccordionItem value={row.getIsExpanded()} className="border-b-0">
           <AccordionTrigger
             onClick={() => row.toggleExpanded()}
-          ></AccordionTrigger>
+            className="hover:no-underline"
+          >
+            <div className="flex w-full flex-row items-center justify-between">
+              <span className="w-48">{String(row.original.captured_at)}</span>
+              <span className="w-48">{String(row.original.value)}</span>
+              <span className="w-48">{String(row.original.unit)}</span>
+              <span className="w-48">
+                {String(
+                  row.original.location_name ||
+                    `${row.original.latitude}, ${row.original.longitude}`
+                )}
+              </span>
+            </div>
+          </AccordionTrigger>
           <AccordionContent>
             <div>Sub Content</div>
           </AccordionContent>
         </AccordionItem>
       </Accordion>
     ),
-  },
-  {
-    accessorKey: "captured_at",
-    header: "Date and Time",
-  },
-  {
-    accessorKey: "value",
-    header: "Measurement",
-  },
-  {
-    accessorKey: "unit",
-    header: "Type",
-  },
-  {
-    accessorFn: (row) =>
-      row.location_name || `${row.latitude}, ${row.longitude}`,
-    header: "Location",
   },
 ];
