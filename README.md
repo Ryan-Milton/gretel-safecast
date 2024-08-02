@@ -8,6 +8,7 @@ Gretel Safecast is a web application designed for [project description]. This RE
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Running the Project](#running-the-project)
+- [Build for Production](#build-for-production)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -87,6 +88,16 @@ Before you begin, ensure you have met the following requirements:
    ```
 
    This will start the development server, and you should be able to access the application at `http://localhost:5173`.
+
+## Build for Production
+
+1. **Build the Project**:
+
+   ```bash
+   npm run build
+   ```
+
+   This will create a `dist` directory with the production build of your application.
 
 ## Contributing
 
