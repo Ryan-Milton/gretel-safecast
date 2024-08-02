@@ -11,6 +11,8 @@ import { Skeleton } from "../ui/skeleton";
 import useDetailedData from "@/lib/data";
 import dayjs from "dayjs";
 import { useEffect } from "react";
+import DetailedView from "./detailed-view";
+import { useQuery } from "@tanstack/react-query";
 
 export type MeasurementData = {
   id: number;
@@ -23,7 +25,7 @@ export type MeasurementData = {
   measurement_import_id: number | null;
   captured_at: string | null;
   height: number | null;
-  devicetype_id: number | null;
+  devicetype_id: string | null;
   sensor_id: number | null;
   station_id: number | null;
   channel_id: number | null;
@@ -70,8 +72,58 @@ export const columns: ColumnDef<MeasurementData>[] = [
         row.toggleExpanded();
       };
 
-      console.log(row.original);
-      console.log({ isPending, isError, data, error });
+      const fetchLocationName = (
+        latitude: number | null,
+        longitude: number | null
+      ) => {
+        const { isPending, isError, data, error } = useQuery({
+          queryKey: ["location_name", latitude, longitude],
+          queryFn: async () => {
+            const response = await fetch(
+              `/nominatim/reverse?format=json&lat=${latitude}&lon=${longitude}`
+            );
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            const json = await response.json();
+            const { address } = json;
+
+            if (!address) {
+              return json.display_name;
+            }
+
+            const locationParts = [];
+
+            if (address.hamlet) {
+              locationParts.push(address.hamlet);
+            } else if (address.city) {
+              locationParts.push(address.city);
+            } else if (address.province) {
+              locationParts.push(address.province);
+            } else if (address.suburb) {
+              locationParts.push(address.suburb);
+            }
+
+            if (address.state) {
+              locationParts.push(address.state);
+            } else if (address.country) {
+              locationParts.push(address.country);
+            }
+
+            return locationParts.length > 0
+              ? locationParts.join(", ")
+              : json.display_name;
+          },
+          enabled: latitude !== null && longitude !== null,
+        });
+
+        return { isPending, isError, data, error };
+      };
+
+      const locationName = fetchLocationName(
+        row.original.latitude,
+        row.original.longitude
+      );
 
       return (
         <Accordion
@@ -94,10 +146,13 @@ export const columns: ColumnDef<MeasurementData>[] = [
                 <span className="w-48">{String(row.original.value)}</span>
                 <span className="w-48">{String(row.original.unit)}</span>
                 <span className="w-48">
-                  {String(
-                    row.original.location_name ||
-                      `${row.original.latitude}, ${row.original.longitude}`
+                  {row.original.location_name && row.original.location_name}
+                  {!row.original.location_name && locationName.isPending && (
+                    <Skeleton className="w-48 h-4" />
                   )}
+                  {!row.original.location_name &&
+                    locationName.data &&
+                    locationName.data}
                 </span>
               </div>
             </AccordionTrigger>
@@ -121,34 +176,7 @@ export const columns: ColumnDef<MeasurementData>[] = [
               ) : isError ? (
                 <span>Error: {error.message}</span>
               ) : (
-                <div className="flex flex-row gap-4 w-full text-left">
-                  {/* this contasins user data, device data, and bgeigie import data */}
-                  <div className="w-2/3 flex flex-row gap-4">
-                    <div className="w-1/2">
-                      <p>Reporter Info:</p>
-                      <p>Name: {data?.user_data?.name}</p>
-                      <p>
-                        Measurement Count: {data?.user_data?.measurements_count}
-                      </p>
-                    </div>
-                    <div className="w-1/2">
-                      {data?.device_data?.status === 404 ? (
-                        <p>Device Not Found</p>
-                      ) : (
-                        <div className="flex flex-col w-full">
-                          <p>Device Info</p>
-                          <p>Manufacture: {data?.device_data?.manufacturer}</p>
-                          <p>Model: {data?.device_data?.model}</p>
-                          <p>Sensor: {data?.device_data?.sensor}</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  {/* This is where the Map will go */}
-                  <div className="w-1/3 flex flex-col">
-                    <p>Location Name</p>
-                  </div>
-                </div>
+                <DetailedView data={data} />
               )}
             </AccordionContent>
           </AccordionItem>
