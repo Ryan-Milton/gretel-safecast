@@ -13,8 +13,14 @@ const useDetailedData = ({
   device_id: number | null;
   measurement_import_id: number | null;
 }) => {
-  const { isPending, isError, data, error } = useQuery({
-    queryKey: ["measurement_details"],
+  const { isPending, isError, data, error, refetch } = useQuery({
+    queryKey: [
+      "measurement_details",
+      measurement_id,
+      user_id,
+      device_id,
+      measurement_import_id,
+    ],
     queryFn: async () => {
       const measurement_data = await fetch(
         `api/measurements/${measurement_id}?api_key=${
@@ -46,7 +52,7 @@ const useDetailedData = ({
     },
     enabled: expanded,
   });
-  return { isPending, isError, data, error };
+  return { isPending, isError, data, error, refetch };
 };
 
 export default useDetailedData;
