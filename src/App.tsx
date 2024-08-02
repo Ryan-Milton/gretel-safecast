@@ -1,8 +1,8 @@
 import "./App.css";
-import DemoPage from "@/components/safecast-table/page";
+import Page from "@/components/safecast-table/page";
 
 function App() {
-  return <DemoPage />;
+  return <Page />;
 }
 
 export default App;
