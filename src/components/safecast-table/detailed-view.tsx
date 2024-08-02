@@ -7,7 +7,7 @@ export default function DetailedView(props: any) {
     data;
   const userData = () => (
     <div className="w-1/4">
-      <p>Reporter Info</p>
+      <p className="font-semibold">Reporter Info</p>
       <p>Name: {user_data?.name}</p>
       <p>Measurement Count: {user_data?.measurements_count}</p>
     </div>
@@ -160,7 +160,7 @@ export default function DetailedView(props: any) {
     ) {
       return (
         <div className="flex flex-col w-1/4">
-          <p>Device Info</p>
+          <p className="font-semibold">Device Info</p>
           {!!measurement_data?.devicetype_id.includes(",") ? (
             measurement_data?.devicetype_id
               .split(",")
@@ -176,7 +176,7 @@ export default function DetailedView(props: any) {
     ) {
       return (
         <div className="flex flex-col w-1/4">
-          <p>Device Info</p>
+          <p className="font-semibold">Device Info</p>
           <p>Manufacture: {data?.device_data?.manufacturer}</p>
           <p>Model: {data?.device_data?.model}</p>
           <p>Sensor: {data?.device_data?.sensor}</p>
