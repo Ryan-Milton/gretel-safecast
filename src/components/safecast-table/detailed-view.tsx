@@ -7,18 +7,13 @@ export default function DetailedView(props: any) {
     data;
   const userData = () => (
     <div className="w-1/4">
-      <p>Reporter Info:</p>
+      <p>Reporter Info</p>
       <p>Name: {user_data?.name}</p>
       <p>Measurement Count: {user_data?.measurements_count}</p>
     </div>
   );
   const bgeigieImportData = () => (
-    <div
-      className={cn(
-        bgeigie_import_data !== null ? "w-1/4" : "",
-        "flex flex-col"
-      )}
-    >
+    <div className="flex flex-col w-full text-wrap">
       {bgeigie_import_data !== null ? (
         <>
           <p>
@@ -130,21 +125,35 @@ export default function DetailedView(props: any) {
   );
   const deviceData = () => {
     if (device_data?.status === 404 && !measurement_data?.devicetype_id) {
-      return (
-        <div className="flex flex-col w-1/4">
-          <p>Device Not Found</p>
-        </div>
-      );
+      if (
+        typeof bgeigie_import_data !== "undefined" &&
+        bgeigie_import_data !== null
+      ) {
+        return null;
+      } else {
+        return (
+          <div className="flex flex-col w-1/4">
+            <p>Device Not Found</p>
+          </div>
+        );
+      }
     } else if (
       device_data?.status !== 404 &&
       !measurement_data?.devicetype_id &&
       !measurement_data?.device_id
     ) {
-      return (
-        <div className="flex flex-col w-1/4">
-          <p>Device Not Found</p>
-        </div>
-      );
+      if (
+        typeof bgeigie_import_data !== "undefined" &&
+        bgeigie_import_data !== null
+      ) {
+        return null;
+      } else {
+        return (
+          <div className="flex flex-col w-1/4">
+            <p>Device Not Found</p>
+          </div>
+        );
+      }
     } else if (
       (device_data?.status !== 404 || device_data?.status === 404) &&
       measurement_data?.devicetype_id !== null
@@ -179,13 +188,10 @@ export default function DetailedView(props: any) {
     <div className="flex flex-row gap-4 w-full text-left">
       {userData()}
       {deviceData()}
-      {bgeigieImportData()}
-      <div
-        className={cn(
-          bgeigie_import_data !== null ? "w-1/4" : "w-1/2",
-          "flex flex-col"
-        )}
-      >
+      <div className={cn(bgeigie_import_data !== null ? "w-1/4" : "")}>
+        {bgeigieImportData()}
+      </div>
+      <div className="flex flex-col w-1/2">
         <MapComponent
           lat={measurement_data?.latitude}
           lon={measurement_data?.longitude}

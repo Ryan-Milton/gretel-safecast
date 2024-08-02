@@ -19,6 +19,7 @@ import { MeasurementData } from "./columns";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { Skeleton } from "../ui/skeleton";
 
 interface DataTableProps {
   columns: ColumnDef<MeasurementData>[];
@@ -67,6 +68,15 @@ export function DataTable({ columns }: DataTableProps) {
     },
   });
 
+  const skelElements = Array.from({ length: 10 }, (_, i) => (
+    <div className="flex flex-row items-center justify-between p-4" key={i}>
+      <Skeleton className="w-48 h-4" />
+      <Skeleton className="w-48 h-4" />
+      <Skeleton className="w-48 h-4" />
+      <Skeleton className="w-48 h-4" />
+    </div>
+  ));
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -89,6 +99,8 @@ export function DataTable({ columns }: DataTableProps) {
           ))}
         </TableHeader>
         <TableBody>
+          {isPending &&
+            skelElements.map((element) => <TableRow>{element}</TableRow>)}
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
