@@ -13,23 +13,32 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as RoutedTableMeasurementIdIndexImport } from './routes/routed-table/$measurementId/index'
 
 // Create Virtual Routes
 
-const RoutedTableLazyImport = createFileRoute('/routed-table')()
 const IndexLazyImport = createFileRoute('/')()
+const RoutedTableIndexLazyImport = createFileRoute('/routed-table/')()
 
 // Create/Update Routes
-
-const RoutedTableLazyRoute = RoutedTableLazyImport.update({
-  path: '/routed-table',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/routed-table.lazy').then((d) => d.Route))
 
 const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const RoutedTableIndexLazyRoute = RoutedTableIndexLazyImport.update({
+  path: '/routed-table/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/routed-table/index.lazy').then((d) => d.Route),
+)
+
+const RoutedTableMeasurementIdIndexRoute =
+  RoutedTableMeasurementIdIndexImport.update({
+    path: '/routed-table/$measurementId/',
+    getParentRoute: () => rootRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -42,11 +51,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
-    '/routed-table': {
-      id: '/routed-table'
+    '/routed-table/': {
+      id: '/routed-table/'
       path: '/routed-table'
       fullPath: '/routed-table'
-      preLoaderRoute: typeof RoutedTableLazyImport
+      preLoaderRoute: typeof RoutedTableIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/routed-table/$measurementId/': {
+      id: '/routed-table/$measurementId/'
+      path: '/routed-table/$measurementId'
+      fullPath: '/routed-table/$measurementId'
+      preLoaderRoute: typeof RoutedTableMeasurementIdIndexImport
       parentRoute: typeof rootRoute
     }
   }
@@ -56,7 +72,8 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexLazyRoute,
-  RoutedTableLazyRoute,
+  RoutedTableIndexLazyRoute,
+  RoutedTableMeasurementIdIndexRoute,
 })
 
 /* prettier-ignore-end */
@@ -68,14 +85,18 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/routed-table"
+        "/routed-table/",
+        "/routed-table/$measurementId/"
       ]
     },
     "/": {
       "filePath": "index.lazy.tsx"
     },
-    "/routed-table": {
-      "filePath": "routed-table.lazy.tsx"
+    "/routed-table/": {
+      "filePath": "routed-table/index.lazy.tsx"
+    },
+    "/routed-table/$measurementId/": {
+      "filePath": "routed-table/$measurementId/index.tsx"
     }
   }
 }

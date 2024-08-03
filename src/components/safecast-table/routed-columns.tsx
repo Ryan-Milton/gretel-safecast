@@ -1,18 +1,8 @@
 import { ColumnDef } from "@tanstack/react-table";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Button } from "../ui/button";
-import { ChevronDown, ChevronUp } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
-import useDetailedData from "@/lib/data";
 import dayjs from "dayjs";
-import { useEffect } from "react";
-import DetailedView from "./detailed-view";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 
 export type MeasurementData = {
   id: number;
@@ -31,17 +21,22 @@ export type MeasurementData = {
   channel_id: number | null;
   latitude: number | null;
   longitude: number | null;
+  subRows: MeasurementData[];
 };
 
 export const columns: ColumnDef<MeasurementData>[] = [
   {
-    accessorKey: "status",
+    accessorKey: "captured_at",
     header: "Captured At",
     cell: ({ row }) => {
       return (
-        <span className="w-48">
+        <Link
+          to="/routed-table/$measurementId"
+          params={{ measurementId: `${row.original.id}` }}
+          className="w-48 cursor-pointer"
+        >
           {dayjs(String(row.original.captured_at)).format("MM/DD/YYYY h:mm A")}
-        </span>
+        </Link>
       );
     },
   },

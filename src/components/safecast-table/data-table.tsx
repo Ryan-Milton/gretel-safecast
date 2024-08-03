@@ -98,7 +98,7 @@ export function DataTable({ columns }: DataTableProps) {
         <TableBody>
           {isPending &&
             skelElements.map((element) => <TableRow>{element}</TableRow>)}
-          {table.getRowModel().rows?.length ? (
+          {table.getRowModel().rows?.length &&
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
@@ -110,14 +110,7 @@ export function DataTable({ columns }: DataTableProps) {
                   </TableCell>
                 ))}
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
-            </TableRow>
-          )}
+            ))}
         </TableBody>
       </Table>
       <div className="flex items-center justify-between space-x-2 p-4">
