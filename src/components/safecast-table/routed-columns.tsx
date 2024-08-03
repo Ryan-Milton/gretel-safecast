@@ -31,47 +31,32 @@ export type MeasurementData = {
   channel_id: number | null;
   latitude: number | null;
   longitude: number | null;
-  subRows: MeasurementData[];
 };
 
 export const columns: ColumnDef<MeasurementData>[] = [
   {
-    id: "expander",
-    header: ({ table }) => (
-      <div className="flex w-full flex-row items-center">
-        <span className="w-1/3">Captured At</span>
-        <span className="w-1/3">Value</span>
-        <span className="w-1/3">Unit</span>
-        <span className="">Location</span>
-        <Button
-          {...{
-            onClick: table.getToggleAllRowsExpandedHandler(),
-          }}
-          variant="ghost"
-        >
-          {table.getIsAllRowsExpanded() ? <ChevronUp /> : <ChevronDown />}
-        </Button>
-      </div>
-    ),
+    accessorKey: "status",
+    header: "Captured At",
     cell: ({ row }) => {
-      const { isPending, isError, data, error, refetch } = useDetailedData({
-        expanded: row.getIsExpanded(),
-        measurement_id: row.original.id,
-        user_id: row.original.user_id,
-        device_id: row.original.device_id,
-        measurement_import_id: row.original.measurement_import_id,
-      });
-
-      useEffect(() => {
-        if (row.getIsExpanded()) {
-          refetch();
-        }
-      }, [row.getIsExpanded(), refetch]);
-
-      const handleToggleExpanded = () => {
-        row.toggleExpanded();
-      };
-
+      return (
+        <span className="w-48">
+          {dayjs(String(row.original.captured_at)).format("MM/DD/YYYY h:mm A")}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "value",
+    header: "Value",
+  },
+  {
+    accessorKey: "unit",
+    header: "Type",
+  },
+  {
+    accessorKey: "location_name",
+    header: "Location",
+    cell: ({ row }) => {
       const fetchLocationName = (
         latitude: number | null,
         longitude: number | null
@@ -126,62 +111,29 @@ export const columns: ColumnDef<MeasurementData>[] = [
       );
 
       return (
-        <Accordion
-          key={row.id}
-          type="single"
-          collapsible
-          value={row.getIsExpanded() ? "expanded" : ""}
-        >
-          <AccordionItem value="expanded" className="border-b-0">
-            <AccordionTrigger
-              onClick={handleToggleExpanded}
-              className="hover:no-underline"
-            >
-              <div className="flex w-full flex-row items-center justify-between">
-                <span className="w-48">
-                  {dayjs(String(row.original.captured_at)).format(
-                    "MM/DD/YYYY h:mm A"
-                  )}
-                </span>
-                <span className="w-48">{String(row.original.value)}</span>
-                <span className="w-48">{String(row.original.unit)}</span>
-                <span className="w-48">
-                  {row.original.location_name && row.original.location_name}
-                  {!row.original.location_name && locationName.isPending && (
-                    <Skeleton className="w-48 h-4" />
-                  )}
-                  {!row.original.location_name &&
-                    locationName.data &&
-                    locationName.data}
-                </span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent>
-              {isPending ? (
-                <div className="flex flex-row gap-4 w-full">
-                  <div className="flex flex-col w-1/3 h-40 gap-4">
-                    <Skeleton className="w-1/2 h-4" />
-                    <Skeleton className="w-2/3 h-4" />
-                    <Skeleton className="w-1/4 h-4" />
-                    <Skeleton className="w-1/4 h-4" />
-                  </div>
-                  <div className="flex flex-col w-1/3 h-40 gap-4">
-                    <Skeleton className="w-1/4 h-4" />
-                    <Skeleton className="w-1/2 h-4" />
-                    <Skeleton className="w-1/4 h-4" />
-                    <Skeleton className="w-2/3 h-4" />
-                  </div>
-                  <Skeleton className="w-1/3 h-40" />
-                </div>
-              ) : isError ? (
-                <span>Error: {error.message}</span>
-              ) : (
-                <DetailedView data={data} />
-              )}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+        <span className="w-48">
+          {row.original.location_name && row.original.location_name}
+          {!row.original.location_name && locationName.isPending && (
+            <Skeleton className="w-48 h-4" />
+          )}
+          {!row.original.location_name &&
+            locationName.data &&
+            locationName.data}
+        </span>
       );
     },
   },
 ];
+
+// -----------------------------------------------------------------------------
+// Detailed Data Fetch
+
+// const { isPending, isError, data, error, refetch } = useDetailedData({
+//   expanded: row.getIsExpanded(),
+//   measurement_id: row.original.id,
+//   user_id: row.original.user_id,
+//   device_id: row.original.device_id,
+//   measurement_import_id: row.original.measurement_import_id,
+// });
+
+// -----------------------------------------------------------------------------
