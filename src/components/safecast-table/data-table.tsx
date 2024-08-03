@@ -126,7 +126,7 @@ export function DataTable({ columns }: DataTableProps) {
           size="sm"
           onClick={() => {
             table.previousPage();
-            tableRef.current?.scrollIntoView({ behavior: "smooth" });
+            window.scrollTo({ top: 0, behavior: "smooth" });
           }}
           disabled={pagination.pageIndex <= 1}
         >
@@ -140,7 +140,7 @@ export function DataTable({ columns }: DataTableProps) {
           size="sm"
           onClick={() => {
             table.nextPage();
-            tableRef.current?.scrollIntoView({ behavior: "smooth" });
+            window.scrollTo({ top: 0, behavior: "smooth" });
           }}
         >
           Next
