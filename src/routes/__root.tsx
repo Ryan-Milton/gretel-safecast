@@ -13,7 +13,7 @@ export const Route = createRootRoute({
             Expanding Table
           </Link>
           <Link
-            to="/details"
+            to="/routed-table"
             className="text-muted-foreground transition-colors hover:text-foreground [&.active]:font-semibold"
           >
             Routed Table

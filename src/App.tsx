@@ -1,8 +1,8 @@
 import "./App.css";
-import Page from "@/components/safecast-table/page";
 
-function App() {
-  return <Page />;
+function App(props: any) {
+  const { children } = props;
+  return children;
 }
 
 export default App;

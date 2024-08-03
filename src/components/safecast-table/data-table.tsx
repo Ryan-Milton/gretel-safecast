@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { MeasurementData } from "./columns";
+import { MeasurementData } from "./expanding-columns";
 import { useState, useRef } from "react";
 import { Button } from "../ui/button";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";

@@ -1,17 +1,11 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import App from "@/App";
-
-const queryClient = new QueryClient();
+import ExpandingTablePage from "@/components/safecast-table/expanding-table-page";
 
 export const Route = createLazyFileRoute("/")({
-  component: Index,
+  component: () => (
+    <App>
+      <ExpandingTablePage />
+    </App>
+  ),
 });
-
-function Index() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <App />
-    </QueryClientProvider>
-  );
-}
