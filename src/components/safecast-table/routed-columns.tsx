@@ -138,16 +138,3 @@ export const columns: ColumnDef<MeasurementData>[] = [
     },
   },
 ];
-
-// -----------------------------------------------------------------------------
-// Detailed Data Fetch
-
-// const { isPending, isError, data, error, refetch } = useDetailedData({
-//   expanded: row.getIsExpanded(),
-//   measurement_id: row.original.id,
-//   user_id: row.original.user_id,
-//   device_id: row.original.device_id,
-//   measurement_import_id: row.original.measurement_import_id,
-// });
-
-// -----------------------------------------------------------------------------

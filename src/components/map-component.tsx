@@ -14,9 +14,10 @@ import MapPin from "../assets/map-pin.svg";
 type MapComponentProps = {
   lat: number;
   lon: number;
+  height?: string;
 };
 
-const MapComponent: React.FC<MapComponentProps> = ({ lat, lon }) => {
+const MapComponent: React.FC<MapComponentProps> = ({ lat, lon, height }) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -67,7 +68,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ lat, lon }) => {
     }
   }, [lat, lon]);
 
-  return <div ref={mapRef} className="w-full h-80"></div>;
+  return <div ref={mapRef} className={`w-full ${height}`}></div>;
 };
 
 export default MapComponent;

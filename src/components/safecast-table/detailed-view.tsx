@@ -7,15 +7,16 @@ export default function DetailedView(props: any) {
     data;
   const userData = () => (
     <div className="w-1/4">
-      <p className="font-semibold">Reporter Info</p>
+      <p className="font-semibold border-b">Reporter Info</p>
       <p>Name: {user_data?.name}</p>
       <p>Measurement Count: {user_data?.measurements_count}</p>
     </div>
   );
   const bgeigieImportData = () => (
-    <div className="flex flex-col w-full text-wrap">
+    <div className="flex flex-col w-full text-left truncate">
       {bgeigie_import_data !== null ? (
         <>
+          <p className="font-semibold border-b">BGeigie Import Info</p>
           <p>
             Source URL:{" "}
             <a href={bgeigie_import_data?.source.url}>
@@ -133,6 +134,7 @@ export default function DetailedView(props: any) {
       } else {
         return (
           <div className="flex flex-col w-1/4">
+            <p className="font-semibold border-b">Device Info</p>
             <p>Device Not Found</p>
           </div>
         );
@@ -150,6 +152,7 @@ export default function DetailedView(props: any) {
       } else {
         return (
           <div className="flex flex-col w-1/4">
+            <p className="font-semibold border-b">Device Info</p>
             <p>Device Not Found</p>
           </div>
         );
@@ -160,7 +163,7 @@ export default function DetailedView(props: any) {
     ) {
       return (
         <div className="flex flex-col w-1/4">
-          <p className="font-semibold">Device Info</p>
+          <p className="font-semibold border-b">Device Info</p>
           {!!measurement_data?.devicetype_id.includes(",") ? (
             measurement_data?.devicetype_id
               .split(",")
@@ -176,7 +179,7 @@ export default function DetailedView(props: any) {
     ) {
       return (
         <div className="flex flex-col w-1/4">
-          <p className="font-semibold">Device Info</p>
+          <p className="font-semibold border-b">Device Info</p>
           <p>Manufacture: {data?.device_data?.manufacturer}</p>
           <p>Model: {data?.device_data?.model}</p>
           <p>Sensor: {data?.device_data?.sensor}</p>
@@ -185,7 +188,7 @@ export default function DetailedView(props: any) {
     }
   };
   return (
-    <div className="flex flex-row gap-4 w-full text-left">
+    <div className="flex flex-row gap-4 w-full text-left px-4 truncate">
       {userData()}
       {deviceData()}
       <div className={cn(bgeigie_import_data !== null ? "w-1/4" : "")}>
@@ -195,6 +198,7 @@ export default function DetailedView(props: any) {
         <MapComponent
           lat={measurement_data?.latitude}
           lon={measurement_data?.longitude}
+          height={"h-80"}
         />
       </div>
     </div>
