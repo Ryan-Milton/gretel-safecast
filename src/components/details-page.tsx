@@ -2,6 +2,7 @@ import { useLoaderData } from "@tanstack/react-router";
 import MapComponent from "./map-component";
 import { fetchLocationName } from "@/lib/data";
 import dayjs from "dayjs";
+import { Skeleton } from "./ui/skeleton";
 
 export default function DetailsPage() {
   const loaderData = useLoaderData({ from: "/routed-table/$measurementId/" });
@@ -210,7 +211,13 @@ export default function DetailsPage() {
           </div>
           <div className="flex gap-2">
             <p>Location:</p>
-            <p>{locationName.data}</p>
+            <p>
+              {locationName.isPending ? (
+                <Skeleton className="w-48 h-6" />
+              ) : (
+                locationName.data
+              )}
+            </p>
           </div>
         </div>
         <div className="text-left">
