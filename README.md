@@ -39,7 +39,7 @@ Before you begin, ensure you have met the following requirements:
 
    This repository uses [Tailwind CSS](https://tailwindcss.com/) for styling and Shadcn/ui for some components. If you are unable to run the project due to "missing peer dependencies" or "missing components", you may need to install the missing dependencies manually; see [Shadcn/ui Installation](https://ui.shadcn.com/docs/installation/vite).
 
-   This project uses [TanStack Router](https://tanstack.com/router/v1/docs/overview) for routing. If you are unable to run the project due to a "missing routeTree.gen.ts" file, you may need to generate the file manually; see [TanStack Router | File Based Routing](https://tanstack.com/router/latest/docs/framework/react/guide/file-based-routing#using-the-generate-command) (note: running `npx tsr generate ` should do the trick if `npm run dev` fails).
+   This project uses [TanStack Router](https://tanstack.com/router/v1/docs/overview) for routing. If you are unable to run the project or navigate to a "routed-table/$measurementId" page please run `npx tsr generate` should do the trick if `npm run dev`; see [TanStack Router | File Based Routing](https://tanstack.com/router/latest/docs/framework/react/guide/file-based-routing#using-the-generate-command).
 
    If you have further issues, please open an issue or email me at mr.ryan.milton@gmail.com.
 
