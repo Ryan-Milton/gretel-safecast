@@ -159,7 +159,7 @@ export const columns: ColumnDef<MeasurementData>[] = [
                 </span>
                 <span className="w-1/3">{String(row.original.value)}</span>
                 <span className="w-1/3">{String(row.original.unit)}</span>
-                <span className="w-52">
+                <span className="w-52 truncate">
                   {row.original.location_name && row.original.location_name}
                   {!row.original.location_name && locationName.isPending && (
                     <Skeleton className="w-48 h-4" />
