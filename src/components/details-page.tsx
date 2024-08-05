@@ -1,22 +1,85 @@
-import { cn } from "@/lib/utils";
-import MapComponent from "../map-component";
+import { useLoaderData } from "@tanstack/react-router";
+import MapComponent from "./map-component";
+import { fetchLocationName } from "@/lib/data";
+import dayjs from "dayjs";
 
-export default function DetailedView(props: any) {
-  const { data } = props;
+export default function DetailsPage() {
+  const loaderData = useLoaderData({ from: "/routed-table/$measurementId/" });
+  console.log(loaderData);
   const { measurement_data, user_data, bgeigie_import_data, device_data } =
-    data;
-  const userData = () => (
-    <div className="w-1/4">
-      <p className="font-semibold border-b">Reporter Info</p>
-      <p>Name: {user_data?.name}</p>
-      <p>Measurement Count: {user_data?.measurements_count}</p>
-    </div>
-  );
+    loaderData;
+  const { latitude, longitude, location_name } = measurement_data;
+  const locationName = location_name
+    ? location_name
+    : fetchLocationName(latitude, longitude);
+  const deviceData = () => {
+    if (device_data?.status === 404 && !measurement_data?.devicetype_id) {
+      if (
+        typeof bgeigie_import_data !== "undefined" &&
+        bgeigie_import_data !== null
+      ) {
+        return null;
+      } else {
+        return (
+          <div className="text-left">
+            <p className="font-semibold text-lg border-b">Device Info</p>
+            <p>Device Not Found</p>
+          </div>
+        );
+      }
+    } else if (
+      device_data?.status !== 404 &&
+      !measurement_data?.devicetype_id &&
+      !measurement_data?.device_id
+    ) {
+      if (
+        typeof bgeigie_import_data !== "undefined" &&
+        bgeigie_import_data !== null
+      ) {
+        return null;
+      } else {
+        return (
+          <div className="text-left">
+            <p className="font-semibold text-lg border-b">Device Info</p>
+            <p>Device Not Found</p>
+          </div>
+        );
+      }
+    } else if (
+      (device_data?.status !== 404 || device_data?.status === 404) &&
+      measurement_data?.devicetype_id !== null
+    ) {
+      return (
+        <div className="text-left">
+          <p className="font-semibold text-lg border-b">Device Info</p>
+          {!!measurement_data?.devicetype_id.includes(",") ? (
+            measurement_data?.devicetype_id
+              .split(",")
+              .map((devicetype: string) => <p>{devicetype}</p>)
+          ) : (
+            <p>{measurement_data?.devicetype_id}</p>
+          )}
+        </div>
+      );
+    } else if (
+      device_data?.status !== 404 &&
+      !measurement_data?.devicetype_id
+    ) {
+      return (
+        <div className="text-left">
+          <p className="font-semibold text-lg border-b">Device Info</p>
+          <p>Manufacture: {device_data?.manufacturer}</p>
+          <p>Model: {device_data?.model}</p>
+          <p>Sensor: {device_data?.sensor}</p>
+        </div>
+      );
+    }
+  };
   const bgeigieImportData = () => (
     <div className="flex flex-col w-full text-left truncate">
       {bgeigie_import_data !== null ? (
         <>
-          <p className="font-semibold border-b">BGeigie Import Info</p>
+          <p className="font-semibold text-lg border-b">BGeigie Import Info</p>
           <p>
             Source URL:{" "}
             <a href={bgeigie_import_data?.source.url}>
@@ -124,82 +187,42 @@ export default function DetailedView(props: any) {
       ) : null}
     </div>
   );
-  const deviceData = () => {
-    if (device_data?.status === 404 && !measurement_data?.devicetype_id) {
-      if (
-        typeof bgeigie_import_data !== "undefined" &&
-        bgeigie_import_data !== null
-      ) {
-        return null;
-      } else {
-        return (
-          <div className="flex flex-col w-1/4">
-            <p className="font-semibold border-b">Device Info</p>
-            <p>Device Not Found</p>
-          </div>
-        );
-      }
-    } else if (
-      device_data?.status !== 404 &&
-      !measurement_data?.devicetype_id &&
-      !measurement_data?.device_id
-    ) {
-      if (
-        typeof bgeigie_import_data !== "undefined" &&
-        bgeigie_import_data !== null
-      ) {
-        return null;
-      } else {
-        return (
-          <div className="flex flex-col w-1/4">
-            <p className="font-semibold border-b">Device Info</p>
-            <p>Device Not Found</p>
-          </div>
-        );
-      }
-    } else if (
-      (device_data?.status !== 404 || device_data?.status === 404) &&
-      measurement_data?.devicetype_id !== null
-    ) {
-      return (
-        <div className="flex flex-col w-1/4">
-          <p className="font-semibold border-b">Device Info</p>
-          {!!measurement_data?.devicetype_id.includes(",") ? (
-            measurement_data?.devicetype_id
-              .split(",")
-              .map((devicetype: string) => <p>{devicetype}</p>)
-          ) : (
-            <p>{measurement_data?.devicetype_id}</p>
-          )}
-        </div>
-      );
-    } else if (
-      device_data?.status !== 404 &&
-      !measurement_data?.devicetype_id
-    ) {
-      return (
-        <div className="flex flex-col w-1/4">
-          <p className="font-semibold border-b">Device Info</p>
-          <p>Manufacture: {data?.device_data?.manufacturer}</p>
-          <p>Model: {data?.device_data?.model}</p>
-          <p>Sensor: {data?.device_data?.sensor}</p>
-        </div>
-      );
-    }
-  };
   return (
-    <div className="flex flex-row gap-4 w-full text-left px-4 truncate">
-      {userData()}
-      {deviceData()}
-      <div className={cn(bgeigie_import_data !== null ? "w-1/4" : "")}>
+    <div className="flex flex-row container mx-auto mt-4 p-4 rounded-md border">
+      <div className="flex flex-col gap-4 w-1/2">
+        <div className="text-left">
+          <p className="font-semibold text-lg border-b">Measurement Info</p>
+          <div className="flex gap-2">
+            <p>Captured At:</p>
+            <p>
+              {dayjs(String(loaderData.measurement_data.captured_at)).format(
+                "MM/DD/YYYY h:mm A"
+              )}
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <p>Value:</p>
+            <p>{String(loaderData.measurement_data.value)}</p>
+          </div>
+          <div className="flex gap-2">
+            <p>Unit of Measure:</p>
+            <p>{String(loaderData.measurement_data.unit)}</p>
+          </div>
+          <div className="flex gap-2">
+            <p>Location:</p>
+            <p>{locationName.data}</p>
+          </div>
+        </div>
+        <div className="text-left">
+          <p className="font-semibold text-lg border-b">Reporter Info</p>
+          <p>Name: {user_data?.name}</p>
+          <p>Measurement Count: {user_data?.measurements_count}</p>
+        </div>
+        {deviceData()}
         {bgeigieImportData()}
       </div>
-      <div className="flex flex-col w-1/2">
-        <MapComponent
-          lat={measurement_data?.latitude}
-          lon={measurement_data?.longitude}
-          height={"h-80"}
-        />
+      <div className="flex w-1/2 pl-4">
+        <MapComponent lat={latitude} lon={longitude} height={"h-fill"} />
       </div>
     </div>
   );

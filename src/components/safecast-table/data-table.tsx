@@ -15,18 +15,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { MeasurementData } from "./columns";
-import { useState } from "react";
+import { MeasurementData } from "./expanding-columns";
+import { useState, useRef } from "react";
 import { Button } from "../ui/button";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "../ui/skeleton";
 
 interface DataTableProps {
   columns: ColumnDef<MeasurementData>[];
-  // data: MeasurementData[];
-  // isPending: boolean;
-  // isError: boolean;
-  // error: any;
 }
 
 export function DataTable({ columns }: DataTableProps) {
@@ -34,6 +30,7 @@ export function DataTable({ columns }: DataTableProps) {
     pageIndex: 1,
     pageSize: 25,
   });
+  const tableRef = useRef<HTMLTableSectionElement>(null);
 
   const fetchMeasurements = async (page: number) => {
     const response = await fetch(
@@ -80,7 +77,7 @@ export function DataTable({ columns }: DataTableProps) {
   return (
     <div className="rounded-md border">
       <Table>
-        <TableHeader>
+        <TableHeader ref={tableRef}>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
@@ -101,7 +98,7 @@ export function DataTable({ columns }: DataTableProps) {
         <TableBody>
           {isPending &&
             skelElements.map((element) => <TableRow>{element}</TableRow>)}
-          {table.getRowModel().rows?.length ? (
+          {table.getRowModel().rows?.length &&
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
@@ -113,21 +110,17 @@ export function DataTable({ columns }: DataTableProps) {
                   </TableCell>
                 ))}
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
-            </TableRow>
-          )}
+            ))}
         </TableBody>
       </Table>
-      <div className="flex items-center justify-between space-x-2 p-4">
+      <div className="flex items-center justify-between space-x-2 p-4 border-t">
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.previousPage()}
+          onClick={() => {
+            table.previousPage();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
           disabled={pagination.pageIndex <= 1}
         >
           Previous
@@ -135,7 +128,14 @@ export function DataTable({ columns }: DataTableProps) {
         <Button variant="ghost" size="sm" className="hover:cursor-default">
           {pagination.pageIndex}
         </Button>
-        <Button variant="outline" size="sm" onClick={() => table.nextPage()}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            table.nextPage();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+        >
           Next
         </Button>
       </div>

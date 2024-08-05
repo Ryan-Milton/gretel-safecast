@@ -8,11 +8,13 @@ import {
 import { Button } from "../ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
-import useDetailedData from "@/lib/data";
+import useDetailedData, { fetchLocationName } from "@/lib/data";
 import dayjs from "dayjs";
 import { useEffect } from "react";
 import DetailedView from "./detailed-view";
 import { useQuery } from "@tanstack/react-query";
+import { CalendarClock, ChartSpline, Earth, PencilRuler } from "lucide-react";
+import Header from "./header";
 
 export type MeasurementData = {
   id: number;
@@ -39,10 +41,18 @@ export const columns: ColumnDef<MeasurementData>[] = [
     id: "expander",
     header: ({ table }) => (
       <div className="flex w-full flex-row items-center">
-        <span className="w-1/3">Captured At</span>
-        <span className="w-1/3">Value</span>
-        <span className="w-1/3">Unit</span>
-        <span className="">Location</span>
+        <div className="w-1/3">
+          <Header name="Captured At" icon={<CalendarClock size={16} />} />
+        </div>
+        <div className="w-1/3">
+          <Header name="Value" icon={<ChartSpline size={16} />} />
+        </div>
+        <div className="w-1/3">
+          <Header name="Unit of Measure" icon={<PencilRuler size={16} />} />
+        </div>
+        <div className="w-40">
+          <Header name="Location" icon={<Earth size={16} />} />
+        </div>
         <Button
           {...{
             onClick: table.getToggleAllRowsExpandedHandler(),
@@ -72,54 +82,6 @@ export const columns: ColumnDef<MeasurementData>[] = [
         row.toggleExpanded();
       };
 
-      const fetchLocationName = (
-        latitude: number | null,
-        longitude: number | null
-      ) => {
-        const { isPending, isError, data, error } = useQuery({
-          queryKey: ["location_name", latitude, longitude],
-          queryFn: async () => {
-            const response = await fetch(
-              `/nominatim/reverse?format=json&lat=${latitude}&lon=${longitude}`
-            );
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
-            }
-            const json = await response.json();
-            const { address } = json;
-
-            if (!address) {
-              return json.display_name;
-            }
-
-            const locationParts = [];
-
-            if (address.hamlet) {
-              locationParts.push(address.hamlet);
-            } else if (address.city) {
-              locationParts.push(address.city);
-            } else if (address.province) {
-              locationParts.push(address.province);
-            } else if (address.suburb) {
-              locationParts.push(address.suburb);
-            }
-
-            if (address.state) {
-              locationParts.push(address.state);
-            } else if (address.country) {
-              locationParts.push(address.country);
-            }
-
-            return locationParts.length > 0
-              ? locationParts.join(", ")
-              : json.display_name;
-          },
-          enabled: latitude !== null && longitude !== null,
-        });
-
-        return { isPending, isError, data, error };
-      };
-
       const locationName = fetchLocationName(
         row.original.latitude,
         row.original.longitude
@@ -135,17 +97,17 @@ export const columns: ColumnDef<MeasurementData>[] = [
           <AccordionItem value="expanded" className="border-b-0">
             <AccordionTrigger
               onClick={handleToggleExpanded}
-              className="hover:no-underline"
+              className="hover:no-underline pr-4"
             >
               <div className="flex w-full flex-row items-center justify-between">
-                <span className="w-48">
+                <span className="w-1/3">
                   {dayjs(String(row.original.captured_at)).format(
                     "MM/DD/YYYY h:mm A"
                   )}
                 </span>
-                <span className="w-48">{String(row.original.value)}</span>
-                <span className="w-48">{String(row.original.unit)}</span>
-                <span className="w-48">
+                <span className="w-1/3">{String(row.original.value)}</span>
+                <span className="w-1/3">{String(row.original.unit)}</span>
+                <span className="w-52 truncate">
                   {row.original.location_name && row.original.location_name}
                   {!row.original.location_name && locationName.isPending && (
                     <Skeleton className="w-48 h-4" />
@@ -158,7 +120,7 @@ export const columns: ColumnDef<MeasurementData>[] = [
             </AccordionTrigger>
             <AccordionContent>
               {isPending ? (
-                <div className="flex flex-row gap-4 w-full">
+                <div className="flex flex-row gap-4 w-full p-4">
                   <div className="flex flex-col w-1/3 h-40 gap-4">
                     <Skeleton className="w-1/2 h-4" />
                     <Skeleton className="w-2/3 h-4" />
