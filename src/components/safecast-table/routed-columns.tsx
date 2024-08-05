@@ -3,6 +3,9 @@ import { Skeleton } from "../ui/skeleton";
 import dayjs from "dayjs";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
+import { CalendarClock, ChartSpline, Earth, PencilRuler } from "lucide-react";
+import Header from "./header";
+import RoutedLink from "./routed-link";
 
 export type MeasurementData = {
   id: number;
@@ -27,30 +30,44 @@ export type MeasurementData = {
 export const columns: ColumnDef<MeasurementData>[] = [
   {
     accessorKey: "captured_at",
-    header: "Captured At",
+    header: () => (
+      <Header name="Captured At" icon={<CalendarClock size={16} />} />
+    ),
     cell: ({ row }) => {
       return (
-        <Link
-          to="/routed-table/$measurementId"
-          params={{ measurementId: `${row.original.id}` }}
-          className="w-48 cursor-pointer"
-        >
+        <RoutedLink measurementId={row.original.id}>
           {dayjs(String(row.original.captured_at)).format("MM/DD/YYYY h:mm A")}
-        </Link>
+        </RoutedLink>
       );
     },
   },
   {
     accessorKey: "value",
-    header: "Value",
+    header: () => <Header name="Value" icon={<ChartSpline size={16} />} />,
+    cell: ({ row }) => {
+      return (
+        <RoutedLink measurementId={row.original.id}>
+          {String(row.original.value)}
+        </RoutedLink>
+      );
+    },
   },
   {
     accessorKey: "unit",
-    header: "Type",
+    header: () => (
+      <Header name="Unit of Measure" icon={<PencilRuler size={16} />} />
+    ),
+    cell: ({ row }) => {
+      return (
+        <RoutedLink measurementId={row.original.id}>
+          {String(row.original.unit)}
+        </RoutedLink>
+      );
+    },
   },
   {
     accessorKey: "location_name",
-    header: "Location",
+    header: () => <Header name="Location" icon={<Earth size={16} />} />,
     cell: ({ row }) => {
       const fetchLocationName = (
         latitude: number | null,
@@ -106,7 +123,8 @@ export const columns: ColumnDef<MeasurementData>[] = [
       );
 
       return (
-        <span className="w-48">
+        <RoutedLink measurementId={row.original.id}>
+          {/* <span className="w-48"> */}
           {row.original.location_name && row.original.location_name}
           {!row.original.location_name && locationName.isPending && (
             <Skeleton className="w-48 h-4" />
@@ -114,7 +132,8 @@ export const columns: ColumnDef<MeasurementData>[] = [
           {!row.original.location_name &&
             locationName.data &&
             locationName.data}
-        </span>
+          {/* </span> */}
+        </RoutedLink>
       );
     },
   },

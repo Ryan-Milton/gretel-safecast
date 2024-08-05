@@ -113,7 +113,7 @@ export function DataTable({ columns }: DataTableProps) {
             ))}
         </TableBody>
       </Table>
-      <div className="flex items-center justify-between space-x-2 p-4">
+      <div className="flex items-center justify-between space-x-2 p-4 border-t">
         <Button
           variant="outline"
           size="sm"
