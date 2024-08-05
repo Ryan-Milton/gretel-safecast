@@ -34,6 +34,11 @@ Before you begin, ensure you have met the following requirements:
    npm install
    ```
 
+3. **Caveat**:
+
+   This repository uses [Tailwind CSS](https://tailwindcss.com/) for styling and Shadcn/ui for some components. If you are unable to run the project due to "missing peer dependencies" or "missing components", you may need to install the missing dependencies manually; see [Shadcn/ui Installation](https://ui.shadcn.com/docs/installation/vite).
+   If you have further issues, please open an issue or email me at mr.ryan.milton@gmail.com.
+
 ## Configuration
 
 1. **Environment Variables**:
