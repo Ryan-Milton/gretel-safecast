@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 
 export default function DetailsPage() {
   const loaderData = useLoaderData({ from: "/routed-table/$measurementId/" });
+  console.log(loaderData);
   const { measurement_data, user_data, bgeigie_import_data, device_data } =
     loaderData;
   const { latitude, longitude, location_name } = measurement_data;
@@ -20,8 +21,8 @@ export default function DetailsPage() {
         return null;
       } else {
         return (
-          <div className="flex flex-col">
-            <p className="font-semibold border-b">Device Info</p>
+          <div className="text-left">
+            <p className="font-semibold text-lg border-b">Device Info</p>
             <p>Device Not Found</p>
           </div>
         );
@@ -38,8 +39,8 @@ export default function DetailsPage() {
         return null;
       } else {
         return (
-          <div className="flex flex-col">
-            <p className="font-semibold border-b">Device Info</p>
+          <div className="text-left">
+            <p className="font-semibold text-lg border-b">Device Info</p>
             <p>Device Not Found</p>
           </div>
         );
@@ -49,8 +50,8 @@ export default function DetailsPage() {
       measurement_data?.devicetype_id !== null
     ) {
       return (
-        <div className="flex flex-col">
-          <p className="font-semibold border-b">Device Info</p>
+        <div className="text-left">
+          <p className="font-semibold text-lg border-b">Device Info</p>
           {!!measurement_data?.devicetype_id.includes(",") ? (
             measurement_data?.devicetype_id
               .split(",")
